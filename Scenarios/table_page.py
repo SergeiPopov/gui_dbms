@@ -126,7 +126,7 @@ class TablePage(QWidget):
 
                 self.view_table.setItem(i, j, QTableWidgetItem(str(cell)))
 
-        self.view_table.resizeColumnsToContents()
+        # self.view_table.resizeColumnsToContents()
 
     def _clear_layout(self, layout):
         # Удаление элементов внутри слоя
