@@ -6,6 +6,7 @@ import sqlalchemy
 
 
 def get_table_info(db_con, table_name, schema=None):
+    schema = None if schema == "" else schema
     inspector = sqlalchemy.inspect(db_con)
     columns = inspector.get_columns(table_name, schema=schema)
     if not len(columns):
@@ -27,7 +28,15 @@ def set_view_table_columns_info(view_table, columns):
 
 
 def get_table(db_con, table_name, schema=None):
-    schema = schema if not schema else None
+    schema = schema if schema else None
     meta = sqlalchemy.MetaData(schema=schema)
     table = sqlalchemy.Table(table_name, meta, autoload_with=db_con.engine)
     return table
+
+
+def get_column_labels(db_con, table_name, schema=None):
+    sql_cols = get_table_info(db_con, table_name, schema=schema)
+    column_labels = list()
+    for col in sql_cols:
+        column_labels.append(col['name'])
+    return column_labels, sql_cols

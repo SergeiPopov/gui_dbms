@@ -88,6 +88,7 @@ def delete_clicked_view_table_btn(page, num_row):
     db_con = page.db_con
     table_name = page.findChildren(QLineEdit, "table_name_line_edit")[0].text()
     schema_name = page.findChildren(QLineEdit, "schema_name_line_edit")[0].text()
+    schema_name = None if schema_name == "" else schema_name
     view_table = page.findChildren(QTableWidget, "view_table")[0]
 
     sql_table = get_table(db_con, table_name, schema_name)
@@ -107,7 +108,7 @@ def update_clicked_view_table_btn(page, num_row):
     table_name = page.findChildren(QLabel, "table_name_label")[0].text().split(" ")[-1]
     schema_name = page.findChildren(QLabel, "table_name_label")[0].text().split(" ")[-2]
     view_table = page.findChildren(QTableWidget, "view_table")[0]
-
+    schema_name = schema_name if schema_name else None
     sql_table = get_table(db_con, table_name, schema_name)
 
     col_value_dict = dict()
@@ -120,7 +121,7 @@ def update_clicked_view_table_btn(page, num_row):
             col_value_dict[sql_col] = value
 
     update_row.set_view_update_row(page, column_names, col_value_dict)
-    update_row.setup_update_settings_layout(page, sql_table, col_value_dict)
+    update_row.setup_update_settings_layout(page, sql_table)
 
 
 def setup_settings_layout(db_con, page, limit: int, offset: int, table_name: str, schema=None):

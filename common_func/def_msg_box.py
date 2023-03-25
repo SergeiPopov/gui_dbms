@@ -8,8 +8,8 @@ class DefMsgBox(QMessageBox):
         super(DefMsgBox, self).__init__()
 
         self.setIcon(QMessageBox.Information)
-        self.setText(title)
-        self.setWindowTitle(text)
+        self.setText(text)
+        self.setWindowTitle(title)
         self.setStandardButtons(QMessageBox.Ok | QMessageBox.Close)
 
         self.exec()

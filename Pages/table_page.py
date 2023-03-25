@@ -6,7 +6,7 @@ import sqlalchemy
 
 import Layouts
 from TableFuncs import table_rows, tables_list, schema_list, table_info
-
+from CRUD import update_row, create_row
 
 class TableInfoPage(QWidget):
     def __init__(self, db_con, parent=None):
@@ -43,6 +43,12 @@ class TableInfoPage(QWidget):
         get_tables_btn = self.findChildren(QPushButton, "get_tables_btn")[0]
         get_tables_btn.clicked.connect(self.get_table_list)
 
+        update_row_btn = self.findChildren(QPushButton, "update_rows_by_table_btn")[0]
+        update_row_btn.clicked.connect(self.update_row_by_table)
+
+        create_row_btn = self.findChildren(QPushButton, "create_rows_by_table_btn")[0]
+        create_row_btn.clicked.connect(self.create_row_by_table)
+
     def get_table_list(self):
         schema_name = self.findChildren(QLineEdit, "schema_name_line_edit")[0].text()
         schema_name = None if schema_name == "" else schema_name
@@ -73,9 +79,25 @@ class TableInfoPage(QWidget):
         view_table = self.findChildren(QTableWidget, "view_table")[0]
         table_info.set_view_table_columns_info(view_table, columns)
 
+    def update_row_by_table(self):
+        table_name = self.findChildren(QLineEdit, "table_name_line_edit")[0].text()
+        schema_name = self.findChildren(QLineEdit, "schema_name_line_edit")[0].text()
+        schema_name = None if schema_name == "" else schema_name
+
+        column_labels, _ = table_info.get_column_labels(self.db_con, table_name, schema_name)
+        sql_table = table_info.get_table(self.db_con, table_name, schema_name)
+        update_row.set_view_update_row(self, column_labels, dict())
+        update_row.setup_update_settings_layout(self, sql_table)
+
+    def create_row_by_table(self):
+        create_row.set_view_create_rows(self)
+        create_row.setup_settings_layout(self)
+
+
 
 if __name__ == '__main__':
-    db_eng = sqlalchemy.create_engine("mssql+pyodbc://SA:libdev2023@127.0.0.1:1433/normal_marc?driver=ODBC+Driver+17+for+SQL+Server&encrypt=no")
+    db_eng = sqlalchemy.create_engine("sqlite:///lib.db", echo=True)
+    # db_eng = sqlalchemy.create_engine("mssql+pyodbc://SA:libdev2023@127.0.0.1:1433/normal_marc?driver=ODBC+Driver+17+for+SQL+Server&encrypt=no", echo=True)
     db_con = db_eng.connect()
 
     import sys
