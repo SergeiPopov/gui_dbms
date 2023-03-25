@@ -7,8 +7,11 @@ import sqlalchemy as sl
 
 from Layouts import Layout
 from functools import partial
-from CRUD import delete_row
+from CRUD.delete_row import delete_rows
 from TableFuncs.table_info import get_table
+from CRUD import update_row
+import Layouts
+
 
 def get_table_rows(db_con, selected_cols: list, limit: int, offset: int, filter_dict: dict, group_by_for_first_col=True):
     if not len(selected_cols):
@@ -59,6 +62,7 @@ def update_rows_from_settings_layout(page):
 
 def set_view_table_rows(page, rows, columns_names):
     view_table = page.findChildren(QTableWidget, "view_table")[0]
+    view_table.clear()
     columns_names = list(columns_names)
     # Колонки для кнопок
     columns_names.append('Удалить запись')
@@ -75,7 +79,7 @@ def set_view_table_rows(page, rows, columns_names):
         delete_btn.clicked.connect(partial(delete_clicked_view_table_btn, page, i))
 
         update_btn = QPushButton("Обновить")
-        # update_btn.clicked.connect()
+        update_btn.clicked.connect(partial(update_clicked_view_table_btn, page, i))
         view_table.setCellWidget(i, len(row), delete_btn)
         view_table.setCellWidget(i, len(row) + 1, update_btn)
 
@@ -87,9 +91,36 @@ def delete_clicked_view_table_btn(page, num_row):
     view_table = page.findChildren(QTableWidget, "view_table")[0]
 
     sql_table = get_table(db_con, table_name, schema_name)
-
+    col_value_dict = dict()
     for num_col in range(view_table.columnCount() - 2):
-        print(view_table.item(num_row, num_col).text())
+        value = view_table.item(num_row, num_col).text()
+        if value:
+            sql_col = getattr(sql_table.c, view_table.horizontalHeaderItem(num_col).text())
+            col_value_dict[sql_col] = value
+
+    delete_rows(db_con, sql_table, [col_value_dict])
+    update_rows_from_settings_layout(page)
+
+
+def update_clicked_view_table_btn(page, num_row):
+    db_con = page.db_con
+    table_name = page.findChildren(QLabel, "table_name_label")[0].text().split(" ")[-1]
+    schema_name = page.findChildren(QLabel, "table_name_label")[0].text().split(" ")[-2]
+    view_table = page.findChildren(QTableWidget, "view_table")[0]
+
+    sql_table = get_table(db_con, table_name, schema_name)
+
+    col_value_dict = dict()
+    column_names = list()
+    for num_col in range(view_table.columnCount() - 2):
+        column_names.append(view_table.horizontalHeaderItem(num_col).text())
+        value = view_table.item(num_row, num_col).text()
+        if value:
+            sql_col = getattr(sql_table.c, view_table.horizontalHeaderItem(num_col).text())
+            col_value_dict[sql_col] = value
+
+    update_row.set_view_update_row(page, column_names, col_value_dict)
+    update_row.setup_update_settings_layout(page, sql_table, col_value_dict)
 
 
 def setup_settings_layout(db_con, page, limit: int, offset: int, table_name: str, schema=None):
@@ -109,6 +140,7 @@ def setup_settings_layout(db_con, page, limit: int, offset: int, table_name: str
     offset_line_edit.setObjectName("offset_line_edit")
 
     # Добавление списка колонок таблицы
+    temp_widget = QWidget()
     layout_check_and_line_rows = QVBoxLayout()
     layout_check_and_line_rows.setObjectName("checkbox_columns_list")
     columns = inspector.get_columns(table_name, schema=schema)
@@ -125,6 +157,7 @@ def setup_settings_layout(db_con, page, limit: int, offset: int, table_name: str
 
         layout_check_and_line_rows.addLayout(check_and_line_row)
 
+    temp_widget.setLayout(layout_check_and_line_rows)
 
     # Кнопка для запуска запроса
     get_table_rows_btn = QPushButton("Вывести записи таблицы", page)
@@ -136,7 +169,7 @@ def setup_settings_layout(db_con, page, limit: int, offset: int, table_name: str
     settings_layout.addWidget(limit_line_edit)
     settings_layout.addWidget(offset_line_edit)
     settings_layout.addWidget(QLabel("Фильтр по колонкам"))
-    settings_layout.addLayout(layout_check_and_line_rows)
+    settings_layout.addWidget(temp_widget)
     settings_layout.addWidget(get_table_rows_btn)
 
 

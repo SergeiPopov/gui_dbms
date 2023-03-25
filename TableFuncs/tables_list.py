@@ -12,6 +12,7 @@ def get_tables_list(db_con, specified_schema=None):
 
 
 def set_view_tables_list(view_table, tables: list):
+    view_table.clear()
     view_table.setRowCount(len(tables))
     view_table.setColumnCount(1)
     view_table.setHorizontalHeaderLabels(["Название таблицы"])
