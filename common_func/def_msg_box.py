@@ -10,7 +10,7 @@ class DefMsgBox(QMessageBox):
         self.setIcon(QMessageBox.Information)
         self.setText(title)
         self.setWindowTitle(text)
-        self.setStandardButtons(QMessageBox.Ok)
+        self.setStandardButtons(QMessageBox.Ok | QMessageBox.Close)
 
         self.exec()
 

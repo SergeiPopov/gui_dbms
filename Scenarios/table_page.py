@@ -7,7 +7,7 @@ from PySide6.QtGui import *
 
 import sqlalchemy as sl
 
-from Scenarios.def_msg_box import DefMsgBox
+from common_func.def_msg_box import DefMsgBox
 
 
 class TablePage(QWidget):

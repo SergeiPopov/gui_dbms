@@ -1,10 +1,7 @@
-from PySide6.QtCore import *
 from PySide6.QtWidgets import *
-from PySide6.QtGui import *
 
 import sqlalchemy as sl
 
-from .def_msg_box import DefMsgBox
 from .table_page import TablePage
 
 
