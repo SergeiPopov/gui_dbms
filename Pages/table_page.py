@@ -96,7 +96,7 @@ class TableInfoPage(QWidget):
 
 
 if __name__ == '__main__':
-    db_eng = sqlalchemy.create_engine("sqlite:///lib.db", echo=True)
+    db_eng = sqlalchemy.create_engine("sqlite:///lib.db")
     # db_eng = sqlalchemy.create_engine("mssql+pyodbc://SA:libdev2023@127.0.0.1:1433/normal_marc?driver=ODBC+Driver+17+for+SQL+Server&encrypt=no", echo=True)
     db_con = db_eng.connect()
 

@@ -1,1 +1,7 @@
-Было протестировано только для mssql server 2022
+Запус программы из main.py
+
+Было протестировано на sqllite lib.db и на mssql server 2022
+
+Используется ORM sqlalchemy для которого нужно предустановить драйвер для конкретной СУБД:
+MySQL = pymysql, MSSQL = pyodbc и т.д.
+https://docs.sqlalchemy.org/en/20/dialects/index.html

@@ -51,7 +51,7 @@ def setup_settings_layout(page):
     add_new_view_row_btn = QPushButton("Добавить ещё одну строку на создание")
     add_new_view_row_btn.clicked.connect(partial(view_table.insertRow, view_table.rowCount()))
 
-    accept_new_view_rows_btn = QPushButton("Добавить ещё одну строку на создание")
+    accept_new_view_rows_btn = QPushButton("Записать новые строки")
     accept_new_view_rows_btn.clicked.connect(partial(clicked_create_rows_btn, page))
 
     settings_layout.addWidget(settings_label)

@@ -1,9 +1,10 @@
+import sqlalchemy
 from PySide6.QtWidgets import *
 
 from Layouts.Layout import Layout
-
-
-class EntryPage(QGridLayout):
+from common_func.def_msg_box import DefMsgBox
+from Pages.table_page import TableInfoPage
+class EntryPage(QWidget):
     def __init__(self, parent=None):
         super(EntryPage, self).__init__(parent)
 
@@ -11,27 +12,21 @@ class EntryPage(QGridLayout):
         self.functional_layout = Layout(QBoxLayout.Direction.TopToBottom, parent)
 
         # Основные функциональные кнопки
-        self.table_info_main_btn = QPushButton("Работа с таблицами")
-        self.crud_rows_main_btn = QPushButton("Работа с записями")
-        self.hand_main_btn = QPushButton("Ручное управление")
+        self.connect_line_edit = QLineEdit("Введите URL подключения. Например sqlite:///lib.db")
+        self.connect_btn = QPushButton("Подключиться")
+        self.connect_btn.clicked.connect(self.test_connection)
 
-        self.functional_layout.append(self.table_info_main_btn)
-        self.functional_layout.append(self.crud_rows_main_btn)
-        self.functional_layout.append(self.hand_main_btn)
+        self.functional_layout.addWidget(self.connect_line_edit)
+        self.functional_layout.addWidget(self.connect_btn)
 
         # Отображение функционального слоя на странице
-        self.addLayout(self.functional_layout, 0, 0)
+        self.setLayout(self.functional_layout)
 
-
-
-
-#
-# import sys
-# app = QApplication([])
-# w = QWidget()
-# main_win = EntryPage()
-#
-# w.setLayout(main_win)
-# w.show()
-# sys.exit(app.exec())
-
+    def test_connection(self):
+        try:
+            con_url = self.connect_line_edit.text()
+            db_con = sqlalchemy.create_engine(con_url).connect()
+            table_page = TableInfoPage(db_con, self.parent())
+            self.parent().change_page(table_page)
+        except:
+            DefMsgBox("Ошибка подключения", "Не удалось подключится к БД")

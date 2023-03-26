@@ -1,5 +1,4 @@
 import sys
-import random
 
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
@@ -7,7 +6,7 @@ from PySide6.QtGui import *
 from PySide6.QtWebEngineWidgets import *
 from PySide6.QtPrintSupport import *
 
-from Scenarios import entry_page
+from Pages.entry_page import EntryPage
 
 
 class MainWindow(QMainWindow):
@@ -15,11 +14,9 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         self.setWindowTitle('GUI_DBMS')
-        self.setGeometry(250, 250, 700, 500)
-        self.s = "dsadasd"
-        start_page = entry_page.EntryPage(self)
+        self.setGeometry(100, 100, 1200, 600)
+        start_page = EntryPage(self)
         self.setCentralWidget(start_page)
-
         self.show()
 
     def change_page(self, ptr_widget_page):
